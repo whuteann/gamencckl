@@ -1,27 +1,63 @@
+
 @tailwind base;
+
+@layer base {
+  h1 {
+    @apply text-4xl lg:text-6xl font-bold;
+  }
+  h2 {
+    @apply text-3xl uppercase font-bold;
+  }
+  h3 {
+    @apply text-2xl font-bold text-themeNavy;
+  }
+  h4 {
+    @apply text-xl uppercase font-bold text-themeColorDark;
+  }
+  p {
+    @apply text-xs xl:text-base 2xl:text-xl text-themeNavy;
+  }
+}
+@import "./formik.css";
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.shadow-custom:focus {
+  box-shadow: none !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.slick-arrow .slick-next {
+  display: none;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.sponsor-logo img {
+  @apply max-w-full block h-4 sm:h-6 w-20 sm:w-24 lg:w-28 2xl:w-32 object-contain object-left xl:object-center;
 }
+
+.social-media svg {
+  @apply max-w-full block h-4 w-4 object-contain object-left;
+}
+
+.terms li {
+  @apply pb-1 text-base xl:text-lg text-justify;
+}
+
+.url-link {
+  @apply text-blue-600 underline italic;
+}
+
+.faq-section {
+  @apply space-y-6;
+}
+
+.faq-content {
+  @apply space-y-6;
+}
+
+.faq-inner-content {
+  @apply space-y-1;
+}
+
+/* .shadow-custom:focus-visible {
+  outline: none;
+} */
