@@ -1,6 +1,6 @@
 import BaseButton from '@/components/atoms/Buttons/BaseButton';
 import { convertFirebaseDate } from '@/src/helpers/AppHelper';
-import { getWinners } from '@/src/services/GameServices';
+import { deleteAllSessions, getWinners } from '@/src/services/GameServices';
 import { getUsers } from '@/src/services/UserServices';
 import { GameType, UserType } from '@/src/types/documents';
 import { getSession } from 'next-auth/react';
@@ -30,6 +30,13 @@ export default function Winners() {
         </BaseButton>
       </div>
       <h1 className='text-3xl'>All Winners and Sessions</h1>
+      <BaseButton clickFunction={()=>{
+          deleteAllSessions(()=>{
+            router.reload();
+          });
+        }}>
+          Clear All
+        </BaseButton>
 
       <div className='mt-5'>
         {

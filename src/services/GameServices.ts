@@ -1,7 +1,8 @@
-import { addDoc, collection, getDocs, orderBy, query, setDoc, where } from "firebase/firestore"
+import { addDoc, collection, deleteDoc, getDocs, orderBy, query, setDoc, where } from "firebase/firestore"
+import { convertFirebaseDateObj } from "../helpers/AppHelper"
 import { docRef, GAME, GAME_COLLECTION } from "../types/collections"
 
-export const getWinners = async () =>{
+export const getWinners = async () => {
 
   const q = await query(GAME, orderBy("created_at", "desc"))
 
@@ -11,16 +12,63 @@ export const getWinners = async () =>{
     return []
   }
 
-  return snapshot.docs.map(item => {
-    return {
-      id: item.id,
-      ...item.data()
+  const promises = snapshot.docs.map(async (item) => {
+
+    if (item.data().winner) {
+      console.log("pills");
+      return {
+        id: item.id,
+        ...item.data()
+      }
+
+    } else {
+      console.log("nothing is ran")
+      const subcollectionRef = collection(docRef(GAME_COLLECTION, item.id), 'participants');
+
+      return await getDocs(subcollectionRef).then(async (snapshots) => {
+        const users = snapshots.docs.map((doc) => {
+          return {
+            uid: doc.data().uid,
+            pressed_at: convertFirebaseDateObj(doc.data().pressed_at)
+          }
+        });
+
+        const fastest = findFastestUser(users);
+
+        await setDoc(docRef(GAME_COLLECTION, item.id), {
+          winner: fastest
+        }, { merge: true })
+
+        return {
+          id: item.id,
+          winner: fastest,
+          ...item.data()
+        }
+      })
     }
   })
+
+  const data = await Promise.all(promises)
+
+  return data;
 }
 
-export const winnersLogic = async (usersName: string) =>{
+export const deleteAllSessions = async (onSuccess:()=>void) =>{
+  await getDocs(GAME).then(async (snapshots) => {
+    const deletionPromises = snapshots.docs.map(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
   
+    // Wait for all deletions to complete
+    await Promise.all(deletionPromises);
+  
+  });
+
+  onSuccess();
+}
+
+export const winnersLogic = async (usersName: string) => {
+
   const q = query(GAME, where("winner_determined", "==", false))
   const snapshot = await getDocs(q);
 
@@ -36,12 +84,12 @@ export const winnersLogic = async (usersName: string) =>{
 
   await setDoc(docRef(GAME_COLLECTION, snapshot.docs[0].id), {
     winner_determined: true,
-  }, {merge: true})
+  }, { merge: true })
 
   return snapshot.docs[0].id
 }
 
-export function findFastestUser(users: Array<{uid: string, pressed_at: Date}>) {
+export function findFastestUser(users: Array<{ uid: string, pressed_at: Date }>) {
   if (!users || users.length === 0) {
     // Handle the case where the array is empty or undefined
     return null;
