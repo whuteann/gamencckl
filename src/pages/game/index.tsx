@@ -1,48 +1,68 @@
+import BaseButton from '@/components/atoms/Buttons/BaseButton';
+import { convertFirebaseDateObj } from '@/src/helpers/AppHelper';
 import { generateRandomName, getLocalStorageItem, setLocalStorageItem } from '@/src/helpers/CookieHelper';
+import { findFastestUser, winnersLogic } from '@/src/services/GameServices';
 import { docRef, GAME, GAME_COLLECTION } from '@/src/types/collections';
-import {  getDocs, query, setDoc, where } from 'firebase/firestore';
+import { collection, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 
 export default function Game() {
   const [color, setColor] = useState<string>("");
-  const [phoneId, setPhoneId]= useState<string>("");
+  const router = useRouter();
   const [usersName, setUsersName] = useState<string>("");
-  
+  const [gameId, setGameId] = useState<string>("");
 
-  useEffect(()=>{
+
+  useEffect(() => {
     const cookie = getLocalStorageItem("phoneId");
     let username = ""
-  
+
     console.log("beginning", cookie);
-  
-    if(!cookie){
+
+    if (!cookie) {
       const new_name = generateRandomName()
       setLocalStorageItem("phoneId", new_name)
       username = new_name
-    }else{
+    } else {
       username = cookie
     }
 
     setUsersName(username);
-  },[])
+  }, [])
+
+  useEffect(() => {
+    if (gameId) {
+      const subcollectionRef = collection(docRef(GAME_COLLECTION, gameId), 'participants');
+
+      getDocs(subcollectionRef).then(snapshots => {
+        const users = snapshots.docs.map((doc) => {
+          return {
+            uid: doc.data().uid,
+            pressed_at: convertFirebaseDateObj(doc.data().pressed_at)
+          }
+        });
+
+        const fastest = findFastestUser(users);
+
+        if (usersName == fastest) {
+          setColor("bg-green-500")
+        } else {
+          setColor("bg-red-500")
+        }
+      })
+    }
+  }, [gameId])
 
   const startGameButtonClick = async () => {
+    const result = await winnersLogic(usersName);
 
-    const q = query(GAME, where("winner_determined", "==", false))
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
+    if (!result) {
       setColor("bg-red-500")
-      return
+    } else {
+      setGameId(result)
     }
-
-    setColor("bg-green-500")
-    await setDoc(docRef(GAME_COLLECTION, snapshot.docs[0].id), {
-      winner_determined: true,
-      winner: usersName
-    }, {merge: true})
-    return
   }
 
   return (
@@ -72,6 +92,13 @@ export default function Game() {
             </div>
           </div>
       }
+      <div className='mt-auto'>
+        <BaseButton color='#ff8080' clickFunction={()=>{
+          router.reload()
+        }}>
+          Reset Button
+        </BaseButton>
+      </div>
     </div >
   )
 }
