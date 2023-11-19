@@ -67,6 +67,7 @@ export default function TopUpMultiple() {
 
                     users.map((user) => (
                       <div
+                        key={user.id}
                         onClick={() => {
                           // Toggle the checkbox value
                           const newValues = values.users.includes(user.id!!)

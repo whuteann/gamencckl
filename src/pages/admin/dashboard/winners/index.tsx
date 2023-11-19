@@ -37,7 +37,7 @@ export default function Winners() {
             ?
             winners.map(item => {
               return (
-                <div id={item.id} className={`w-full bg-blue-100 rounded-md shadow-md p-4 mb-3`}>
+                <div key={item.id} id={item.id} className={`w-full bg-blue-100 rounded-md shadow-md p-4 mb-3`}>
                   <h3>{item.winner || "No winner yet"}</h3>
                   <p className='text-base'>Created At: {`${convertFirebaseDate(item.created_at)}`}</p>
                 </div>

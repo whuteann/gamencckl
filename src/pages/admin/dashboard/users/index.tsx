@@ -35,7 +35,7 @@ export default function Users() {
             ?
             users.map(user => {
               return (
-                <div id={user.id} onClick={() => {
+                <div key={user.id} id={user.id} onClick={() => {
                   router.push(`/admin/dashboard/users/${user.id}`)
                   console.log(user.id)
                 }} className={`w-full ${user.role == "Admin" ? "bg-red-400": "bg-blue-400"} rounded-md shadow-md p-4 mb-3`}>
