@@ -12,9 +12,24 @@ interface SignUpFormFieldsProps {
 export const login = async (data: { name: string, password: string }, onSuccess: (url: string) => void, onError: (error: string) => void) => {
   const res: any = await signIn('credentials', {
     redirect: false,
-    name: data.name.toLowerCase(),
+    name: data.name.toLowerCase().trim(),
     password: data.password,
     callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}`,
+  });
+
+  if (res?.error) {
+    onError(res.error);
+  } else {
+    onSuccess(res.url);
+  }
+}
+
+export const loginAdmin = async (data: { name: string, password: string }, onSuccess: (url: string) => void, onError: (error: string) => void) => {
+  const res: any = await signIn('credentials', {
+    redirect: false,
+    name: data.name.toLowerCase().trim(),
+    password: data.password,
+    callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/admin/dashboard`,
   });
 
   if (res?.error) {

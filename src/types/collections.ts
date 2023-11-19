@@ -7,3 +7,6 @@ export const docRef = (collection: string, id: string) =>{
 
 export const USERS_COLLECTION = "users";
 export const USERS = collection(firestore, USERS_COLLECTION);
+
+export const GAME_COLLECTION = "games";
+export const GAME = collection(firestore, GAME_COLLECTION);

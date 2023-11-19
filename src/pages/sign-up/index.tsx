@@ -87,7 +87,7 @@ const SignUp = () => {
                 <Link className='text-themeColorMain' href={'/login'}>Already have an account? Login now!</Link>
                 <div className='mb-5' />
 
-                <BaseButton type='submit' isLoading={loading} className='transition-all border-2 border-transparent mx-auto font-bold bg-themeColorLighter text-themeColorDark hover:bg-themeColorDark hover:text-white p-2 rounded-md'>
+                <BaseButton type='submit' isLoading={loading}>
                   Sign Up
                 </BaseButton>
               </div>

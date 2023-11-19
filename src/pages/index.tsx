@@ -43,7 +43,7 @@ export default function Home({ user }: HomeProps) {
       <div className='w-full mt-auto'>
         <BaseButton type='button' clickFunction={() => {
           logout();
-        }} isLoading={false} className='transition-all border-2 border-transparent w-full font-bold bg-themeColorLighter text-themeColorDark hover:bg-themeColorDark hover:text-white p-2 rounded-md'>
+        }} isLoading={false}>
           Click Here to Log Out
         </BaseButton>
       </div>

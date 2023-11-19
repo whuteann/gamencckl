@@ -1,5 +1,5 @@
 import BaseButton from '@/components/atoms/Buttons/BaseButton';
-import { login } from '@/src/services/AuthServices';
+import { login, loginAdmin } from '@/src/services/AuthServices';
 import { UserType } from '@/src/types/documents';
 import { Field, Form, Formik } from 'formik';
 import { getSession } from 'next-auth/react';
@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-const Login = () => {
+const AdminLogin = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -15,7 +15,7 @@ const Login = () => {
 
   const loginUser = (values: { name: string, password: string }) => {
     setLoading(true);
-    login(values, (url) => {
+    loginAdmin(values, (url) => {
       setLoading(false);
       router.push(url);
     }, (errmsg) => {
@@ -29,7 +29,7 @@ const Login = () => {
     <div className='p-6 py-8 overflow-y-auto'>
       <div className='bg-themeColorDark p-2 mb-5'>
         <h1 className='text-white'>
-          Lifeline and Abide Christmas Games App
+          Admin Dashboard
         </h1>
       </div>
       <h1>Login</h1>
@@ -70,7 +70,6 @@ const Login = () => {
                     className=""
                   />
                 </div>
-                <Link className='text-themeColorMain' href={'/sign-up'}>No Account? Sign up now!</Link>
                 <div className='mb-5' />
 
                 <BaseButton type='submit' isLoading={loading}>
@@ -93,14 +92,14 @@ const Login = () => {
   )
 }
 
-export default Login;
+export default AdminLogin;
 
 export async function getServerSideProps(context: any) {
   const session = await getSession(context);
   const user: UserType = (session as any)?.currentUser || null;
 
   if (user) {
-    if (user.role == "User") {
+    if(user.role == "User"){
       return {
         redirect: {
           permanent: false,
@@ -109,7 +108,7 @@ export async function getServerSideProps(context: any) {
         props: {},
       };
     }
-
+    
     return {
       redirect: {
         permanent: false,
