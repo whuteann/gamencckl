@@ -1,5 +1,6 @@
 import BaseButton from '@/components/atoms/Buttons/BaseButton';
 import { getSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { getUser } from '../services/AuthServices';
 import { UserType } from '../types/documents';
@@ -11,6 +12,7 @@ interface HomeProps {
 export default function Home({ user }: HomeProps) {
 
   const [userData, setUserData] = useState<UserType | undefined>(undefined);
+  const router = useRouter();
 
   const logout = async () => {
     await signOut({
@@ -40,7 +42,12 @@ export default function Home({ user }: HomeProps) {
         <p className="text-sm mt-2">Available Credits</p>
       </div>
 
-      <div className='w-full mt-auto'>
+      <div className='flex flex-col w-full mt-auto space-y-3'>
+        <BaseButton color='#ff8080' type='button' clickFunction={() => {
+          router.reload();
+        }} isLoading={false}>
+          Refresh Page
+        </BaseButton>
         <BaseButton type='button' clickFunction={() => {
           logout();
         }} isLoading={false}>
