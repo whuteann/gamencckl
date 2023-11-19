@@ -1,7 +1,6 @@
 import BaseButton from '@/components/atoms/Buttons/BaseButton';
 import { getUsers, updateMultipleUserCredit } from '@/src/services/UserServices';
 import { UserType } from '@/src/types/documents';
-import { user } from 'firebase-functions/v1/auth';
 import { Field, Form, Formik } from 'formik';
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
